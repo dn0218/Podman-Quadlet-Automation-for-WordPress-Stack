@@ -22,3 +22,12 @@ This project automates the deployment of a production-ready, rootless WordPress 
    **运行剧本**：
    ```bash
    ansible-playbook site.yml
+   ```
+
+### Sample outcome
+
+<img width="1143" height="761" alt="Screenshot 2026-04-08 141231" src="https://github.com/user-attachments/assets/4e194cc1-be4f-451d-97bf-c35c975f167d" />
+
+<img width="790" height="236" alt="Screenshot 2026-04-08 141630" src="https://github.com/user-attachments/assets/5072e97e-594f-4f68-9658-fa7c506a8d0c" />
+
+<img width="1412" height="852" alt="Screenshot 2026-04-08 144454" src="https://github.com/user-attachments/assets/658a7d81-f8ee-4b4c-8507-f8125a59fd5a" />
