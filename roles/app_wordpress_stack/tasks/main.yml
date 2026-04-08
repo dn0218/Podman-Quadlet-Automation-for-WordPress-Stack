@@ -1,0 +1,73 @@
+---
+- name: Get the real UID of the podman user
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ podman_user }}"
+
+- name: Set UID as a fact
+  ansible.builtin.set_fact:
+    real_user_uid: "{{ getent_passwd[podman_user][1] }}"
+
+- name: Debug UID (Optional)
+  ansible.builtin.debug:
+    msg: "The UID for {{ podman_user }} is {{ real_user_uid }}"
+
+# 之后所有用到 XDG_RUNTIME_DIR 的地方都引用这个变量
+- name: Systemd user daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    scope: user
+  become: true
+  become_user: "{{ podman_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ real_user_uid }}"
+
+- name: Get UID of the podman user
+  ansible.builtin.command: "id -u {{ podman_user }}"
+  register: user_id
+  changed_when: false
+
+- name: Create Quadlet directory
+  ansible.builtin.file:
+    path: "/home/{{ podman_user }}/.config/containers/systemd"
+    state: directory
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+    mode: '0755'
+
+- name: Deploy Quadlet templates
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/home/{{ podman_user }}/.config/containers/systemd/{{ item }}"
+    owner: "{{ podman_user }}"
+    group: "{{ podman_user }}"
+    mode: '0644'
+  loop:
+    - wp_network.network
+    - db_data.volume
+    - wp_stack.pod
+    - mariadb.container
+    - redis.container
+    - wordpress.container
+  register: quadlet_files
+
+- name: Force systemd to run generators
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    scope: user
+  become: true
+  become_user: "{{ podman_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ real_user_uid }}"
+
+- name: Start the WordPress Stack Pod
+  ansible.builtin.systemd:
+    # 注意：确保这里名字与你定义的 [Pod] PodName 一致，通常带 -pod 后缀
+    name: wp_stack-pod 
+    state: started
+    enabled: yes
+    scope: user
+  become: true
+  become_user: "{{ podman_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ real_user_uid }}"

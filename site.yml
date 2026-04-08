@@ -1,0 +1,12 @@
+---
+- name: Setup Production Podman Infrastructure
+  hosts: all
+  become: true
+  vars:
+    # 建议生产环境使用 vault 加密这些变量
+    db_root_password: "SuperSecretPassword123"
+    db_user_password: "WPUserPassword456"
+
+  roles:
+    - podman_user_setup    # 先处理权限和 Linger
+    - app_wordpress_stack  # 后部署应用

@@ -1,0 +1,12 @@
+[Container]
+ContainerName=wp_app
+Image=docker.io/library/wordpress:latest
+Environment=WORDPRESS_DB_HOST=127.0.0.1
+Environment=WORDPRESS_DB_USER=wp_user
+Environment=WORDPRESS_DB_PASSWORD={{ db_user_password }}
+Environment=WORDPRESS_DB_NAME=wordpress
+# 因为在同一个 Pod，直接连接 127.0.0.1 访问 DB/Redis
+Pod=wp_stack.pod
+
+[Service]
+Restart=always

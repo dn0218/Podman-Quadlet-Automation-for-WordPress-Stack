@@ -1,0 +1,13 @@
+[Container]
+ContainerName=wp_db
+Image=docker.io/library/mariadb:10.11
+Environment=MARIADB_ROOT_PASSWORD={{ db_root_password }}
+Environment=MARIADB_DATABASE=wordpress
+Environment=MARIADB_USER=wp_user
+Environment=MARIADB_PASSWORD={{ db_user_password }}
+Volume=db_data.volume:/var/lib/mysql:Z
+Pod=wp_stack.pod
+
+[Install]
+# 随着 Pod 启动
+WantedBy=default.target
