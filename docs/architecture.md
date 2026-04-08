@@ -16,6 +16,9 @@ The stack uses a single **Pod** (`wp_stack.pod`).
 * **External**: Only the WordPress web port (default: 8989) is mapped to the host IP.
     **外部**：仅将 WordPress Web 端口（默认 8989）映射至宿主机。
 
+  <img width="382" height="125" alt="image" src="https://github.com/user-attachments/assets/f39695f2-88ad-42bf-9bc8-debac845db6b" />
+
+
 
 
 ### 💾 Persistence / 持久化
